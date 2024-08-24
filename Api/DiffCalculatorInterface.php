@@ -6,14 +6,15 @@ namespace Aligent\DateTime\Api;
 interface DiffCalculatorInterface
 {
     /**
+     * Calculate the difference between two dates
      * @param string $startDate
      * @param string $endDate
      * @param string $calculationType
-     * @return int
+     * @return int|false|float
      */
     public function calculate(
         string $startDate,
         string $endDate,
         string $calculationType
-    ): int;
+    ): int|false|float;
 }

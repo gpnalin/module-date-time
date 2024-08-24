@@ -21,11 +21,11 @@ class DiffCalculator implements DiffCalculatorInterface
      * @param string $startDate
      * @param string $endDate
      * @param string $calculationType
-     * @return int
+     * @return int|false|float
      * @throws ValidationException
      * @throws Exception
      */
-    public function calculate(string $startDate, string $endDate, string $calculationType): int
+    public function calculate(string $startDate, string $endDate, string $calculationType): int|false|float
     {
         $this->validateInputs($startDate, $endDate, $calculationType);
 
@@ -47,6 +47,21 @@ class DiffCalculator implements DiffCalculatorInterface
                 break;
             case 'weekdays':
                 $result = $this->calculateWeekdays($start, $end);
+                break;
+            case 'weeks':
+                $result = floor($interval->days / 7);
+                break;
+            case 'hours':
+                $result = $interval->days * 24 + $interval->h;
+                break;
+            case 'minutes':
+                $result = ($interval->days * 24 + $interval->h) * 60 + $interval->i;
+                break;
+            case 'seconds':
+                $result = (($interval->days * 24 + $interval->h) * 60 + $interval->i) * 60 + $interval->s;
+                break;
+            case 'years':
+                $result = $interval->y + $interval->days / 365.25;
                 break;
         }
 
