@@ -2,4 +2,4 @@
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-ComponentRegistrar::register(ComponentRegistrar::MODULE, 'Aligent_Datetime', __DIR__);
+ComponentRegistrar::register(ComponentRegistrar::MODULE, 'Aligent_DateTime', __DIR__);
