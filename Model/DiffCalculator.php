@@ -7,15 +7,23 @@ use Aligent\DateTime\Api\DiffCalculatorInterface;
 use DateInterval;
 use DateTime;
 use Exception;
+use Magento\Framework\Intl\DateTimeFactory;
 use Magento\Framework\Validation\ValidationException;
 
 class DiffCalculator implements DiffCalculatorInterface
 {
+
     /**
      * Allowed calculation types
      */
-    protected const array CALCULATION_TYPES = ['days', 'weekdays', 'weeks', 'seconds', 'minutes', 'hours', 'years'];
+    public const array CALCULATION_TYPES = ['days', 'weekdays', 'weeks', 'seconds', 'minutes', 'hours', 'years'];
 
+    /**
+     * @param DateTimeFactory $dateTimeFactory
+     */
+    public function __construct(public DateTimeFactory $dateTimeFactory)
+    {
+    }
 
     /**
      * @param string $startDate
@@ -29,8 +37,8 @@ class DiffCalculator implements DiffCalculatorInterface
     {
         $this->validateInputs($startDate, $endDate, $calculationType);
 
-        $start = new DateTime($startDate);
-        $end = new DateTime($endDate);
+        $start = $this->dateTimeFactory->create($startDate);
+        $end = $this->dateTimeFactory->create($endDate);
 
         if ($end < $start) {
             throw new ValidationException(__('End date must be greater than or equal to start date.'));
@@ -61,7 +69,7 @@ class DiffCalculator implements DiffCalculatorInterface
                 $result = (($interval->days * 24 + $interval->h) * 60 + $interval->i) * 60 + $interval->s;
                 break;
             case 'years':
-                $result = $interval->y + $interval->days / 365.25;
+                $result = $interval->y;
                 break;
         }
 
@@ -94,7 +102,7 @@ class DiffCalculator implements DiffCalculatorInterface
      * @param string $dateTIme
      * @return bool
      */
-    protected function isValidDateTime(string $dateTIme): bool
+    public function isValidDateTime(string $dateTIme): bool
     {
         return strtotime($dateTIme) > 0;
     }
