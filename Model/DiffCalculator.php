@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Aligent\DateTime\Model;
 
+use Aligent\DateTime\Api\Data\ResultInterface;
+use Aligent\DateTime\Api\Data\ResultInterfaceFactory;
 use Aligent\DateTime\Api\DiffCalculatorInterface;
 use DateInterval;
 use DateTime;
@@ -20,8 +22,9 @@ class DiffCalculator implements DiffCalculatorInterface
 
     /**
      * @param DateTimeFactory $dateTimeFactory
+     * @param ResultInterfaceFactory $resultFactory
      */
-    public function __construct(public DateTimeFactory $dateTimeFactory)
+    public function __construct(protected DateTimeFactory $dateTimeFactory, protected ResultInterfaceFactory $resultFactory)
     {
     }
 
@@ -29,10 +32,10 @@ class DiffCalculator implements DiffCalculatorInterface
      * @param string $startDate
      * @param string $endDate
      * @param string $calculationType
-     * @return int
+     * @return ResultInterface
      * @throws ValidationException|Exception
      */
-    public function calculate(string $startDate, string $endDate, string $calculationType): int
+    public function calculate(string $startDate, string $endDate, string $calculationType): ResultInterface
     {
         $this->validateInputs($startDate, $endDate, $calculationType);
 
@@ -72,7 +75,10 @@ class DiffCalculator implements DiffCalculatorInterface
                 break;
         }
 
-        return (int)$result;
+        $resultObject = $this->resultFactory->create();
+        $resultObject->setResult((int)$result);
+
+        return $resultObject;
     }
 
     /**

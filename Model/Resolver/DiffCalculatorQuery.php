@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Aligent\DateTime\Model\Resolver;
 
 use Aligent\DateTime\Api\DiffCalculatorInterface;
+use Aligent\DateTime\Model\Result;
+use Exception;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
@@ -15,7 +17,7 @@ class DiffCalculatorQuery implements ResolverInterface
     /**
      * @param DiffCalculatorInterface $diffCalculator
      */
-    public function __construct(private readonly DiffCalculatorInterface $diffCalculator)
+    public function __construct(private DiffCalculatorInterface $diffCalculator)
     {
     }
 
@@ -26,7 +28,7 @@ class DiffCalculatorQuery implements ResolverInterface
      * @param array|null $value
      * @param array|null $args
      * @return array
-     * @throws GraphQlInputException
+     * @throws GraphQlInputException|Exception
      */
     public function resolve(
         Field $field,
@@ -40,9 +42,13 @@ class DiffCalculatorQuery implements ResolverInterface
             $startDate = $args['startDate'];
             $endDate = $args['endDate'];
             $calculationType = strtolower($args['calculationType']);
-            return ['result' => $this->diffCalculator->calculate($startDate, $endDate, $calculationType)];
+            /** @var Result $resultObject */
+            $resultObject = $this->diffCalculator->calculate($startDate, $endDate, $calculationType);
+            return $resultObject->getData();
         } catch (ValidationException $e) {
             throw new GraphQlInputException(__($e->getMessage()));
+        } catch (Exception $e) {
+            throw new $e;
         }
     }
 }
