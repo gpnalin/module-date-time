@@ -1,35 +1,134 @@
-# Aligent_DateTime module
+# Aligent DateTime API
 
-<font color='red'>**The following example is a complete README for a module Magento_Default:** </font>
-# Magento_Default module
-The Magento_Default module enables you to add the Configurable Product updates to the existing store campaigns.
+## Overview
 
-The Magento_Default module is a part of the staging functionality in Magento EE. The module adds the “Configurations” tab and the configuration wizard to the Schedule Update form of a product. You can change the Configurable Product attributes in campaigns. These updates are shown on the campaign dashboard.
+The Aligent DateTime API is a Magento 2 module that provides functionality to calculate the difference between two dates. It supports various calculation types and can be accessed via both REST API and GraphQL.
 
-## Installation details
+## Features
 
-The Magento_Default module makes irreversible changes in a database during installation. You cannot disable or uninstall this module.
+- Calculate the difference between two dates in:
+    - Days
+    - Weekdays
+    - Weeks
+    - Hours
+    - Minutes
+    - Seconds
+    - Years
+- Support for standard datetime formats with timezone
+- REST API endpoint
+- GraphQL query
 
-For information about a module installation in Magento 2, see [Enable or disable modules](https://devdocs.magento.com/guides/v2.4/install-gde/install/cli/install-cli-subcommands-enable.html).
+## Installation
 
-## Extensibility
+1. Copy the `Aligent_DateTime` module to your Magento 2 `app/code` directory.
+2. Enable the module by running:
+   ```
+   bin/magento module:enable Aligent_DateTime
+   ```
+3. Run the Magento setup upgrade:
+   ```
+   bin/magento setup:upgrade
+   ```
+4. Compile Dependency Injection:
+   ```
+   bin/magento setup:di:compile
+   ```
+5. Clean the cache:
+   ```
+   bin/magento cache:clean
+   ```
 
-Extension developers can interact with the Magento_Default module. For more information about the Magento extension mechanism, see [Magento plug-ins](https://devdocs.magento.com/guides/v2.4/extension-dev-guide/plugins.html).
+## Usage
 
-[The Magento dependency injection mechanism](https://devdocs.magento.com/guides/v2.4/extension-dev-guide/depend-inj.html) enables you to override the functionality of the Magento_Default module.
+### REST API
 
-### Layouts
+#### Endpoint
 
-The module introduces layout handles in the `view/adminhtml/layout` directory.
+`POST /V1/aligent-datetime/calculate`
 
-For more information about a layout in Magento 2, see the [Layout documentation](https://devdocs.magento.com/guides/v2.4/frontend-dev-guide/layouts/layout-overview.html).
+#### Parameters
 
-### UI components
+- `startDate` (string): The start date in ISO 8601 format (e.g., "2023-01-01T00:00:00+00:00")
+- `endDate` (string): The end date in ISO 8601 format (e.g., "2023-01-10T00:00:00+00:00")
+- `calculationType` (string): The type of calculation to perform (days, weekdays, weeks, hours, minutes, seconds, years)
 
-You can extend product and category updates using the UI components located in the `view/adminhtml/ui_component` directory.
+#### Example Request
 
-For information about a UI component in Magento 2, see [Overview of UI components](https://devdocs.magento.com/guides/v2.4/ui_comp_guide/bk-ui_comps.html).
+```json
+POST /V1/aligent-datetime/calculate
+Content-Type: application/json
 
-## Additional information
+{
+  "startDate": "2023-01-01T00:00:00+00:00",
+  "endDate": "2023-01-10T00:00:00+00:00",
+  "calculationType": "days"
+}
+```
 
-For information about significant changes in patch releases, see [Release information](https://devdocs.magento.com/guides/v2.4/release-notes/bk-release-notes.html).
+#### Example Response
+
+```json
+3
+```
+
+### GraphQL
+
+#### Query
+
+```graphql
+query CalculateDateTimeDifference(
+  $startDate: String!,
+  $endDate: String!,
+  $calculationType: CalculationType!
+) {
+  calculateDateTimeDifference(
+    startDate: $startDate,
+    endDate: $endDate,
+    calculationType: $calculationType
+  ) {
+    result
+  }
+}
+```
+
+#### Variables
+
+```json
+{
+  "startDate": "2023-01-01T00:00:00+00:00",
+  "endDate": "2023-01-10T00:00:00+00:00",
+  "calculationType": "days"
+}
+```
+
+#### Example Response
+
+```json
+{
+  "data": {
+    "DiffCalculatorQuery": {
+      "result": 9
+    }
+  }
+}
+```
+
+## Error Handling
+
+Both the REST API and GraphQL query will return appropriate error messages if the input is invalid or if an unexpected error occurs during calculation.
+
+## Supported Calculation Types
+
+- `days`: Calculate the total number of days
+- `weekdays`: Calculate the number of weekdays (Monday to Friday)
+- `weeks`: Calculate the number of complete weeks
+- `hours`: Calculate the total number of hours
+- `minutes`: Calculate the total number of minutes
+- `seconds`: Calculate the total number of seconds
+- `years`: Calculate the number of years
+
+## Notes
+
+- All dates should be provided in standard datetime formats with timezone information.
+- If no timezone is specified, UTC is assumed.
+- The `endDate` must be greater than or equal to the `startDate`.
