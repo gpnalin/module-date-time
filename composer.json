@@ -1,22 +1,27 @@
 {
-  "name": "gpnalin/module-date-time",
-  "version": "1.0.0",
-  "description": "N/A",
-  "type": "magento2-module",
-  "require": {
-    "php": "~8.3",
-    "magento/framework": "*"
-  },
-  "license": [
-      "OSL-3.0",
-      "AFL-3.0"
-  ],
-  "autoload": {
-    "files": [
-      "registration.php"
+    "name": "gpnalin/module-date-time",
+    "version": "1.0.0",
+    "description": "N/A",
+    "type": "magento2-module",
+    "require": {
+        "php": "~8.3",
+        "magento/framework": "*"
+    },
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
     ],
-    "psr-4": {
-      "Aligent\\DateTime\\": ""
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Aligent\\DateTime\\": ""
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aligent\\DateTime\\Test\\": "Test/"
+        }
     }
-  }
 }
