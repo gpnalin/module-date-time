@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Aligent\DateTime\Test\Unit\Model;
 
+use Aligent\DateTime\Api\Data\ResultInterfaceFactory;
 use Aligent\DateTime\Model\DiffCalculator;
+use Aligent\DateTime\Model\Result;
+use DateTime;
+use Exception;
 use Magento\Framework\Intl\DateTimeFactory;
 use Magento\Framework\Validation\ValidationException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use DateTime;
-use Exception;
 
 class DiffCalculatorTest extends TestCase
 {
@@ -18,6 +20,16 @@ class DiffCalculatorTest extends TestCase
      * @var DateTimeFactory|MockObject
      */
     private DateTimeFactory|MockObject $dateTimeFactoryMock;
+
+    /**
+     * @var ResultInterfaceFactory|(ResultInterfaceFactory&MockObject)|MockObject
+     */
+    private ResultInterfaceFactory $resultFactoryMock;
+
+    /**
+     * @var Result
+     */
+    private Result $resultMock;
 
     /**
      * @var DiffCalculator
@@ -31,7 +43,18 @@ class DiffCalculatorTest extends TestCase
             ->onlyMethods(['create'])
             ->addMethods(['diff'])
             ->getMock();
-        $this->diffCalculator = new DiffCalculator($this->dateTimeFactoryMock);
+
+        $this->resultFactoryMock = $this->getMockBuilder(ResultInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
+
+        $this->resultMock = $this->getMockBuilder(Result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getResult','setResult','getData'])
+            ->getMock();
+
+        $this->diffCalculator = new DiffCalculator($this->dateTimeFactoryMock, $this->resultFactoryMock);
     }
 
     /**
@@ -49,9 +72,15 @@ class DiffCalculatorTest extends TestCase
             ->method('create')
             ->willReturnOnConsecutiveCalls($start, $end);
 
+        $this->resultFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($this->resultMock);
+
+        $this->resultMock->expects($this->once())->method('setResult')->with($expectedResult);
+
         $result = $this->diffCalculator->calculate($startDate, $endDate, $calculationType);
 
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($this->resultMock, $result);
     }
 
     public function calculateDataProvider(): array
