@@ -1,0 +1,23 @@
+type Query {
+    DiffCalculatorQuery(
+        startDate: String!
+        endDate: String!
+        calculationType: CalculationType!
+    ): DiffCalculatorResult!
+    @resolver(class: "Aligent\\DateTime\\Model\\Resolver\\DiffCalculatorQuery")
+    @doc(description: "Calculates difference between two dates,")
+}
+
+enum CalculationType {
+    days
+    weekdays
+    weeks
+    seconds
+    minutes
+    hours
+    years
+}
+
+type DiffCalculatorResult {
+    result: Int
+}

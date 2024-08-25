@@ -29,11 +29,10 @@ class DiffCalculator implements DiffCalculatorInterface
      * @param string $startDate
      * @param string $endDate
      * @param string $calculationType
-     * @return int|false|float
-     * @throws ValidationException
-     * @throws Exception
+     * @return int
+     * @throws ValidationException|Exception
      */
-    public function calculate(string $startDate, string $endDate, string $calculationType): int|false|float
+    public function calculate(string $startDate, string $endDate, string $calculationType): int
     {
         $this->validateInputs($startDate, $endDate, $calculationType);
 
@@ -73,7 +72,7 @@ class DiffCalculator implements DiffCalculatorInterface
                 break;
         }
 
-        return $result;
+        return (int)$result;
     }
 
     /**
