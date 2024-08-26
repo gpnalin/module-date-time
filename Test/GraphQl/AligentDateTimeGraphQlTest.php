@@ -1,6 +1,6 @@
 <?php
 
-namespace Aligent\DateTime\Test\Api;
+namespace Aligent\DateTime\Test\GraphQl;
 
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 
